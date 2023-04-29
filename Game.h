@@ -13,12 +13,15 @@ private:
     string judgePhonenum;
     string aiLetter;
     string playerPhonenum;
+    int no_of_messages = 0;
 public:
     Game(string judgePhonenum, string playerPhonenum);
     bool isJudge(string phonenum);
     bool isAI(string letter);
     string getPlayerPhonenum();
     string getJudgePhonenum();
+    int getNoOfMessages();
+    void incrementNoOfMessages();
 };
 
 

@@ -26,3 +26,11 @@ string Game::getPlayerPhonenum() {
 string Game::getJudgePhonenum() {
     return judgePhonenum;
 }
+
+int Game::getNoOfMessages() {
+    return no_of_messages;
+}
+
+void Game::incrementNoOfMessages() {
+    no_of_messages++;
+}
