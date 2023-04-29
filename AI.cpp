@@ -13,7 +13,7 @@ AI::AI(string openai_api_key) {
     this->openai_api_key = openai_api_key;
 }
 
-string AI::askGPT(string q) {
+string AI::askGPT(string q, vector <string> prior_messages) {
     string answer = "";
     int retries = 1;
     while (answer.empty() && retries > 0) {
@@ -34,6 +34,20 @@ string AI::askGPT(string q) {
                         {"role", "system"},
                         {"content", "You are a human talking to a judge. You are part of a Turing Test and your goal is to convince the judge that you are a human and the other player is the AI. Keep the response very short as it will be sent over SMS. Use abbreviations and emojis sometimes."}
                 }));
+        //add assistant message
+        j["messages"].push_back(nlohmann::json::object(
+                {
+                        {"role", "assistant"},
+                        {"content", "These are the prior messages"}
+                }));
+
+        for (auto m : prior_messages) {
+            j["messages"].push_back(nlohmann::json::object(
+                    {
+                            {"role", "user"},
+                            {"content", m}
+                    }));
+        }
         j["messages"].push_back(nlohmann::json::object(
                 {
                         {"role", "assistant"},

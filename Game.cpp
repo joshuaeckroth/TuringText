@@ -34,3 +34,19 @@ int Game::getNoOfMessages() {
 void Game::incrementNoOfMessages() {
     no_of_messages++;
 }
+
+bool Game::isGameOver() {
+    return game_over;
+}
+
+void Game::setGameOver(bool game_over) {
+    this->game_over = game_over;
+}
+
+void Game::addAIMessage(string message) {
+    AI_messages.push_back(message);
+}
+
+vector <string> Game::getAIMessages() {
+    return AI_messages;
+}

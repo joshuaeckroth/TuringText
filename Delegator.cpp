@@ -22,10 +22,33 @@ string Delegator::handle_request(string phonenum, string msg) {
     Game *g = gb->getGame(phonenum);
     if(g) {
         if(g->isJudge(phonenum)) {
+            if (g->isGameOver()){
+                if(msg_lower == "a") {
+                    if(g->isAI("A")) {
+                        string response = "You are correct! The AI was Player A.";
+                        return response;
+                    } else {
+                        string response = "You are incorrect! The AI was Player B.";
+                        return response;
+                    }
+                } else if(msg_lower == "b") {
+                    if(g->isAI("B")) {
+                        string response = "You are correct! The AI was Player B.";
+                        return response;
+                    } else {
+                        string response = "You are incorrect! The AI was Player A.";
+                        return response;
+                    }
+                } else {
+                    string response = "Invalid input. Please enter A or B.";
+                    return response;
+                }
+            }
             //check if 5 messages have been sent
             if(g->getNoOfMessages() >= 5) {
                 // judge has sent 5 messages, game is over
                 string response = "Game over! Which do you think the AI is? A or B?";
+                g->setGameOver(true);
                 return response;
             }
             if(msg_lower.find("player a") != string::npos) {
@@ -33,14 +56,15 @@ string Delegator::handle_request(string phonenum, string msg) {
                 if(g->isAI("A")) {
                     if(phonenum.length() < 5) {
                         // AI is texting us
-                        string response = ai->askGPT(msg);
+                        string response = ai->askGPT(msg, g->getAIMessages());
+                        g->addAIMessage(msg);
                         string letter = g->isAI("A") ? "A" : "B";
                         response = "Player " + letter + ": " + response;
                         return response;
                     }
                     thread t([this, phonenum, msg, g]() {
                         cout << "AI is thinking..." << endl;
-                        string response = ai->askGPT(msg);
+                        string response = ai->askGPT(msg, g->getAIMessages());
                         string letter = g->isAI("A") ? "A" : "B";
                         response = "Player " + letter + ": " + response;
                         this_thread::sleep_for(chrono::seconds(rand() % 10));
@@ -56,7 +80,7 @@ string Delegator::handle_request(string phonenum, string msg) {
                 if(g->isAI("B")) {
                     if(phonenum.length() < 5) {
                         // AI is texting us
-                        string response = ai->askGPT(msg);
+                        string response = ai->askGPT(msg, g->getAIMessages());
                         string letter = g->isAI("A") ? "A" : "B";
                         response = "Player " + letter + ": " + response;
                         return response;
@@ -64,7 +88,7 @@ string Delegator::handle_request(string phonenum, string msg) {
                     // wait random time before responding
                     thread t([this, phonenum, msg, g]() {
                         cout << "AI is thinking..." << endl;
-                        string response = ai->askGPT(msg);
+                        string response = ai->askGPT(msg, g->getAIMessages());
                         string letter = g->isAI("A") ? "A" : "B";
                         response = "Player " + letter + ": " + response;
                         this_thread::sleep_for(chrono::seconds(rand() % 10));
